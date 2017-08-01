@@ -40,18 +40,11 @@ class PantryTest < Minitest::Test
     pantry = Pantry.new
 
     converted = pantry.convert_units(r)
-    expected_cayenne = {quantity: 25, units: "Milli-Units"}
-    expected_cheese = {quantity: 75, units: "Universal Units"}
-    expected_flour = {quantity: 5, units: "Centi-Units"}
+    expected = {"Cayenne Pepper" => {quantity: 25, units: "Milli-Units"},
+    "Cheese"         => {quantity: 75, units: "Universal Units"},
+    "Flour"          => {quantity: 5, units: "Centi-Units"}}
 
-
-
-
-    assert_instance_of Hash, converted
-    assert_equal ["Cayenne Pepper", "Cheese", "Flour"], converted.keys
-    assert_equal expected_cayenne, converted["Cayenne Pepper"]
-    assert_equal expected_cheese, converted["Cheese"]
-    assert_equal expected_flour, converted["Flour"]
+    assert_equal expected, converted
   end
 
   def test_add_to_cookbook
@@ -126,6 +119,23 @@ class PantryTest < Minitest::Test
     expected = {"Brine Shot" => 4, "Peanuts" => 2}
 
     assert_equal expected, pantry.how_many_can_i_make
+  end
+
+  def test_convert_units_mixed_units
+    r = Recipe.new("Spicy Cheese Pizza")
+    r.add_ingredient("Cayenne Pepper", 1.025)
+    r.add_ingredient("Cheese", 75)
+    r.add_ingredient("Flour", 550)
+    pantry = Pantry.new
+
+    converted = pantry.convert_units(r)
+    expected = {"Cayenne Pepper" => [{quantity: 25, units: "Milli-Units"},
+                         {quantity: 1, units: "Universal Units"}],
+    "Cheese"         => [{quantity: 75, units: "Universal Units"}],
+    "Flour"          => [{quantity: 5, units: "Centi-Units"},
+                         {quantity: 50, units: "Universal Units"}]}
+
+    assert_equal expected, converted
   end
 
 end
