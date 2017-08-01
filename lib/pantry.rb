@@ -11,29 +11,46 @@ class Pantry
 
   private
 
+    def check_to_remove_universal_units(result_hash)
+      if result_hash.last[:quantity] == 0
+        result_hash.pop
+      end
+      result_hash
+    end
+
+    def add_milli_units(milli_units, result)
+      if milli_units > 1
+        result << {quantity: milli_units, units: "Milli-Units"}
+      end
+    end
+
+    def add_whole_units(whole_units, result)
+      if whole_units >= 1
+        result << {quantity: whole_units, units: "Universal Units"}
+      end
+    end
+
+    def add_centi_units(centi_units, result)
+      if centi_units > 0
+        result.unshift({quantity: centi_units, units: "Centi-Units"})
+        result.last[:quantity] -= (centi_units * 100)
+        result = check_to_remove_universal_units(result)
+      end
+    end
+
     def convert_decimal(amount)
       result = []
       whole_units = (amount / 1).floor
       milli_units = ((amount % 1).round(3) * 1000).to_i
-      if milli_units > 1
-        result << {quantity: milli_units, units: "Milli-Units"}
-      end
-      if whole_units >= 1
-        result << {quantity: whole_units, units: "Universal Units"}
-      end
+      add_milli_units(milli_units, result)
+      add_whole_units(whole_units, result)
       result
     end
 
     def convert(amount)
       result = convert_decimal(amount)
       centi_units = (amount / 100).to_i
-      if centi_units > 0
-        result.unshift({quantity: centi_units, units: "Centi-Units"})
-        result.last[:quantity] -= (centi_units * 100)
-        if result.last[:quantity] == 0
-          result.pop
-        end
-      end
+      add_centi_units(centi_units, result)
       result
     end
 
