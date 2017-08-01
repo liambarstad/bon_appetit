@@ -1,7 +1,6 @@
 require './lib/recipe'
 require 'minitest/autorun'
 require 'minitest/pride'
-require 'pry'
 
 class RecipeTest < Minitest::Test
   def test_it_has_a_name
