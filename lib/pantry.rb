@@ -2,9 +2,11 @@ require './lib/recipe'
 require 'pry'
 
 class Pantry
-  attr_reader :stock
+  attr_reader :stock,
+              :cookbook
   def initialize
     @stock = {}
+    @cookbook = []
   end
 
   private
@@ -44,5 +46,18 @@ class Pantry
         result.store(name, amount)
         result
       end
+    end
+
+    def add_to_cookbook(recipe)
+      @cookbook << recipe
+    end
+
+    def what_can_i_make
+      recipes = @cookbook.find_all do |recipe|
+        recipe.ingredients.all? do |ingredient_pair|
+          @stock[ingredient_pair[0]] >= ingredient_pair[1]
+        end
+      end
+      recipes.reduce([]) {|result, recipe| result << recipe.name}
     end
 end
