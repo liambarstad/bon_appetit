@@ -22,22 +22,17 @@ class Pantry
         result << {quantity: whole_units, units: "Universal Units"}
       end
       result
-      # if amount < 1
-      #   result = [{quantity: (amount * 1000), units: "Milli-Units"}]
-      # elsif amount % 1 != 0
-      #   result = [{quantity: ((amount - whole_units).round(3) * 1000).to_int, units: "Milli-Units"},
-      #   {quantity: whole_units, units: "Universal Units"}]
-      # else
-      #   result = [{quantity: amount, units: "Universal Units"}]
-      # end
-      # result
     end
 
     def convert(amount)
       result = convert_decimal(amount)
-      if amount > 100
-        result.unshift({quantity: (amount / 100), units: "Centi-Units"})
-        result.last[:quantity] = amount % 100
+      centi_units = (amount / 100).to_i
+      if centi_units > 0
+        result.unshift({quantity: centi_units, units: "Centi-Units"})
+        result.last[:quantity] -= (centi_units * 100)
+        if result.last[:quantity] == 0
+          result.pop
+        end
       end
       result
     end
