@@ -21,6 +21,13 @@ class Pantry
       end
     end
 
+    def find_least_common_multiple(recipe)
+      lowest_ingredient = recipe.ingredients.min_by do |ingredient|
+        (@stock[ingredient[0]] / ingredient[1]).floor
+      end
+      (@stock[lowest_ingredient[0]] / lowest_ingredient[1]).floor
+    end
+
   public
 
     def stock_check(food)
@@ -59,5 +66,14 @@ class Pantry
         end
       end
       recipes.reduce([]) {|result, recipe| result << recipe.name}
+    end
+
+    def how_many_can_i_make
+      what_can_i_make.reduce({}) do |result, name|
+        operating_recipe = @cookbook.find {|recipe| recipe.name == name}
+        number = find_least_common_multiple(operating_recipe)
+        result.store(name, number)
+        result
+      end
     end
 end
