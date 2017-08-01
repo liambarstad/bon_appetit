@@ -11,14 +11,26 @@ class Pantry
 
   private
 
-    def convert(amount)
+    def convert_decimal(amount)
+      whole_units = (amount / 1).floor
       if amount < 1
-        {quantity: (amount * 1000), units: "Milli-Units"}
-      elsif amount > 100
-        {quantity: (amount / 100), units: "Centi-Units"}
+        result = [{quantity: (amount * 1000), units: "Milli-Units"}]
+      elsif amount % 1 != 0
+        result = [{quantity: ((amount - whole_units).round(3) * 1000).to_int, units: "Milli-Units"},
+        {quantity: whole_units, units: "Universal Units"}]
       else
-        {quantity: amount, units: "Universal Units"}
+        result = [{quantity: amount, units: "Universal Units"}]
       end
+      result
+    end
+
+    def convert(amount)
+      result = convert_decimal(amount)
+      if amount > 100
+        result.unshift({quantity: (amount / 100), units: "Centi-Units"})
+        result.last[:quantity] = amount % 100
+      end
+      result
     end
 
     def find_least_common_multiple(recipe)
