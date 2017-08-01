@@ -1,5 +1,4 @@
 require './lib/recipe'
-require 'pry'
 
 class Pantry
   attr_reader :stock,
