@@ -12,16 +12,25 @@ class Pantry
   private
 
     def convert_decimal(amount)
+      result = []
       whole_units = (amount / 1).floor
-      if amount < 1
-        result = [{quantity: (amount * 1000), units: "Milli-Units"}]
-      elsif amount % 1 != 0
-        result = [{quantity: ((amount - whole_units).round(3) * 1000).to_int, units: "Milli-Units"},
-        {quantity: whole_units, units: "Universal Units"}]
-      else
-        result = [{quantity: amount, units: "Universal Units"}]
+      milli_units = ((amount % 1).round(3) * 1000).to_i
+      if milli_units > 1
+        result << {quantity: milli_units, units: "Milli-Units"}
+      end
+      if whole_units >= 1
+        result << {quantity: whole_units, units: "Universal Units"}
       end
       result
+      # if amount < 1
+      #   result = [{quantity: (amount * 1000), units: "Milli-Units"}]
+      # elsif amount % 1 != 0
+      #   result = [{quantity: ((amount - whole_units).round(3) * 1000).to_int, units: "Milli-Units"},
+      #   {quantity: whole_units, units: "Universal Units"}]
+      # else
+      #   result = [{quantity: amount, units: "Universal Units"}]
+      # end
+      # result
     end
 
     def convert(amount)
